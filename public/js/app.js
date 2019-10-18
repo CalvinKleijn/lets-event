@@ -49511,6 +49511,7 @@ __webpack_require__(/*! C:\xampp\htdocs\lets-event\resources\js\app.js */"./reso
 module.exports = __webpack_require__(/*! C:\xampp\htdocs\lets-event\resources\sass\app.scss */"./resources/sass/app.scss"); 
 
 
+
 /***/ })
 
 /******/ });

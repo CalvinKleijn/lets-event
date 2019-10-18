@@ -12,7 +12,7 @@ class Tournament extends Model
     public function getUsersByRole($roleId)
     {
         return TournamentUserRole::where([
-            'tournament_id' => $this->id,
+            'user_id' => $this->id,
             'role_id' => $roleId
         ])->get();
     }

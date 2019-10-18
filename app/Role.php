@@ -8,7 +8,6 @@ class Role extends Model
 {
     public static function getByName($roleName)
     {
-        $role = self::all()->firstWhere('name', $roleName);
-        return (($role == null) ? null : $role);
+        return self::where('name', $roleName)->first();
     }
 }

@@ -37,13 +37,15 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function hasRoleInTournament($tournamentId, $roleName)
+    public function hasRoleInTournament($roleName, $tournamentId)
     {
-        $organizerRole = Role::getByName($roleName);
-        return TournamentUserRole::where([
-            'tournament_id' => $tournamentId,
-            'user_id' => $this->id,
-            'role_id' => $organizerRole->id
-        ])->get();
+        $role = Role::getByName($roleName);
+
+        if (!$role) {
+            return null;
+        }
+
+        return TournamentUserRole::where(['tournament_id' => $tournamentId, 'user_id' => $this->id, 'role_id' => $role->id])
+            ->first();
     }
 }

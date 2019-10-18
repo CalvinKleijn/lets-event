@@ -18,12 +18,40 @@
 
     <div class="container">
         <h1 class="text-left">Overzicht van toernooien</h1>
-        <table class="table">
+        <table class="table sortable" data-request-url="{{ route('tournament.sort') }}">
             <thead>
             <tr>
-                <th scope="col">Naam</th>
-                <th scope="col">Beschrijving</th>
-                <th scope="col">Startdatum</th>
+                <th scope="col">
+                    @if ($columnToSortBy == 'id')
+                        <a href="{{ route('tournament.index') }}?pageNumber={{ $pageNumber }}&columnToSortBy=id&orderToSortBy={{ $newOrderToSortBy }}">Id</a>
+                    @else
+                        <a href="{{ route('tournament.index') }}?pageNumber={{ $pageNumber }}&columnToSortBy=id">Id</a>
+                    @endif
+                </th>
+                <th scope="col">
+                    @if ($columnToSortBy == 'name')
+                        <a href="{{ route('tournament.index') }}?pageNumber={{ $pageNumber }}&columnToSortBy=name&orderToSortBy={{ $newOrderToSortBy }}">Naam</a>
+                    @else
+                        <a href="{{ route('tournament.index') }}?pageNumber={{ $pageNumber }}&columnToSortBy=name">Naam</a>
+                    @endif
+                </th>
+                <th scope="col">
+                    @if ($columnToSortBy == 'description')
+                        <a href="{{ route('tournament.index') }}?pageNumber={{ $pageNumber }}&columnToSortBy=description&orderToSortBy={{ $newOrderToSortBy }}">Beschrijving</a>
+                    @else
+                        <a href="{{ route('tournament.index') }}?pageNumber={{ $pageNumber }}&columnToSortBy=description">Beschrijving</a>
+                    @endif
+                </th>
+                <th scope="col">
+                    @if ($columnToSortBy == 'start_date_time')
+                        <a href="{{ route('tournament.index') }}?pageNumber={{ $pageNumber }}&columnToSortBy=start_date_time&orderToSortBy={{ $newOrderToSortBy }}">Start
+                            datum en tijd</a>
+                    @else
+                        <a href="{{ route('tournament.index') }}?pageNumber={{ $pageNumber }}&columnToSortBy=start_date_time">Start
+                            datum en tijd</a>
+                    @endif
+                </th>
+
                 <th scope="col">Deelnemer</th>
                 <th scope="col" colspan="3">Beheer</th>
             </tr>
@@ -31,6 +59,9 @@
             <tbody>
             @foreach($tournaments as $tournament)
                 <tr>
+                    <td>
+                        {{ $tournament->id }}
+                    </td>
                     <td>
                         <a href="{{ route('tournament.show', $tournament->id) }}">{{ $tournament->name }}</a>
                     </td>
@@ -76,7 +107,10 @@
             </tbody>
         </table>
 
-        <a href="{{ route('tournament.create') }}" class="btn btn-primary">Nieuw toernooi</a>
+        @include('layouts.partials.pagination')
+        @yield('pagination')
+
+        <a href="{{ route('tournament.create') }}" class="btn btn-primary">Maak een toernooi</a>
 
     </div>
 @endsection
