@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\RoleEnum;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -15,16 +16,12 @@ class RoleTableSeeder extends Seeder
         DB::table('roles')->insert([
            [
                'id' => 1,
-               'name' => 'organizer'
+               'name' => RoleEnum::ORGANIZER
            ],
             [
                 'id' => 2,
-                'name' => 'participant'
+                'name' => RoleEnum::PARTICIPANT
             ],
-            [
-                'id' => 3,
-                'name' => 'referee'
-            ]
         ]);
     }
 }

@@ -3,6 +3,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\RoleEnum;
 use App\Role;
 use App\Tournament;
 use App\TournamentUserRole;
@@ -34,9 +35,9 @@ class TournamentAdminController extends Controller
                 })->toArray();
 
             // TODO: Hardcoded rol namen statisch maken.
-            $tournamentUser->isOrganizer = array_search('organizer', $userRoles) > -1
+            $tournamentUser->isOrganizer = array_search(RoleEnum::ORGANIZER, $userRoles) > -1
                 ? true : false;
-            $tournamentUser->isParticipant = array_search('participant', $userRoles) > -1
+            $tournamentUser->isParticipant = array_search(RoleEnum::PARTICIPANT, $userRoles) > -1
                 ? true : false;
 
             return $tournamentUser;

@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Enums\RoleEnum;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 

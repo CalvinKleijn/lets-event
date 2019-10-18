@@ -2,25 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\RoleEnum;
 use App\Role;
 use App\Tournament;
 use App\TournamentUserRole;
-use Carbon\Carbon;
-use DateTimeZone;
 use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-//     public function __construct()
-//     {
-//         $this->middleware('auth');
-//     }
-
     /**
      * Show the application dashboard.
      *
@@ -36,7 +25,7 @@ class HomeController extends Controller
         $userTournaments = null;
 
         if (Auth::check()) {
-            $participantRoleId = Role::all()->firstWhere('name', '=', 'participant')->id;
+            $participantRoleId = Role::where('name', RoleEnum::PARTICIPANT)->first()->id;
 
             // TODO: Check inbouwen om te kijken of id wel bestaat.
             // Ga na aan welke toernooien de gebruiker deelneemt.

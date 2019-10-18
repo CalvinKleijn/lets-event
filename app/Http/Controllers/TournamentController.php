@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\RoleEnum;
 use App\Role;
 use App\Tournament;
 use App\TournamentUserRole;
@@ -79,7 +80,7 @@ class TournamentController extends Controller
             'start_date_time' => $request->input('start-date-time')
         ]);
 
-        $organizerRoleId = Role::getByName('organizer')->id;
+        $organizerRoleId = Role::getByName(RoleEnum::ORGANIZER)->id;
 
         TournamentUserRole::create([
             'tournament_id' => $createdTournament->id,
@@ -98,7 +99,7 @@ class TournamentController extends Controller
      */
     public function show(Tournament $tournament)
     {
-//        $participantRoleId = Role::getByName('participant');
+//        $participantRoleId = RoleEnum::getByName('participant');
         return view('tournament.show', compact('tournament'));
     }
 
