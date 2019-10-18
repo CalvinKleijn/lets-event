@@ -81,43 +81,53 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ "./resources/js/app.js":
-/*!*****************************!*\
-  !*** ./resources/js/app.js ***!
-  \*****************************/
+/***/ "./resources/js/charts/homeChart.js":
+/*!******************************************!*\
+  !*** ./resources/js/charts/homeChart.js ***!
+  \******************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-
+var myChart = document.getElementById('miniChart').getContext('2d');
+var pieChart = new Chart(myChart, {
+  type: 'pie',
+  data: {
+    labels: ['Gewonnen', 'Verloren', 'Gelijkgespeeld'],
+    datasets: [{
+      data: ['66', '33', '1'],
+      backgroundColor: ['green', 'red', 'blue'],
+      borderWith: 1,
+      borderColor: '#ffffff',
+      hoverBorderWith: 3,
+      hoverborderColor: '#000'
+    }]
+  },
+  options: {
+    title: {// display: true,
+      // text: "Toernooi Uitslagen",
+      // fontSize: 25
+    },
+    legend: {
+      position: 'top'
+    }
+  }
+});
 
 /***/ }),
 
-/***/ "./resources/sass/app.scss":
-/*!*********************************!*\
-  !*** ./resources/sass/app.scss ***!
-  \*********************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-
-/***/ 0:
-/*!*************************************************************!*\
-  !*** multi ./resources/js/app.js ./resources/sass/app.scss ***!
-  \*************************************************************/
+/***/ 1:
+/*!************************************************!*\
+  !*** multi ./resources/js/charts/homeChart.js ***!
+  \************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp\htdocs\lets-event\resources\js\app.js */"./resources/js/app.js"); 
-module.exports = __webpack_require__(/*! C:\xampp\htdocs\lets-event\resources\sass\app.scss */"./resources/sass/app.scss"); 
-
+module.exports = __webpack_require__(/*! C:\laragon\www\lets-event\resources\js\charts\homeChart.js */"./resources/js/charts/homeChart.js");
 
 
 /***/ })

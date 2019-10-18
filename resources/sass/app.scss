@@ -4,6 +4,7 @@
 // Variables
 @import 'variables';
 
+
 #homepage {
     background: linear-gradient(to bottom, rgba(50, 50, 50, 0.3) 0%, rgba(50, 50, 50, 0.7) 75%, #161616 100%), url("images/background1.jpeg") no-repeat center center fixed;
     -webkit-background-size: cover;
@@ -28,7 +29,6 @@
     &:focus {
         outline: none;
     }
-
 }
 
 a {
@@ -36,4 +36,19 @@ a {
         padding: 0;
         text-decoration: none !important;
     }
+}
+
+#miniChart {    
+    margin-bottom: 20px;
+}
+
+.noListStyling {
+    font-size: 100px;
+    list-style-type: none;
+    margin-left: 0;
+    padding-left: 0;
+}
+
+.test {
+    background-color:red;
 }

@@ -5,8 +5,8 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes();
 
-// Todo: Twee dezelfde routes die door dezelfde controller method worden aangeroepen?
-Route::get('/dashboard', 'HomeController@index')->name('dashboard');
+
+Route::get('/', 'HomeController@index')->name('dashboard');
 Route::get('/', 'HomeController@index')->name('home');
 
 /* Account en dashboard routes. */
@@ -37,4 +37,8 @@ Route::middleware(['auth', 'hasOrganizerRole'])->group(function () {
         ->name('tournament.admin.deleteUser');
     Route::post('/tournament/{tournamentId}/admin/user/{userId}/role/{roleName}', 'TournamentAdminController@storeUser')
         ->name('tournament.admin.storeUser');
+        
 });
+
+// 'Widget' from dashboard
+Route::get('/stats','HomeController@stats')->name('stats');

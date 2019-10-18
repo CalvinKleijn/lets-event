@@ -28,3 +28,18 @@ a.btn-custom {
   text-decoration: none !important;
 }
 
+#miniChart {
+  margin-bottom: 20px;
+}
+
+.noListStyling {
+  font-size: 100px;
+  list-style-type: none;
+  margin-left: 0;
+  padding-left: 0;
+}
+
+.test {
+  background-color: red;
+}
+

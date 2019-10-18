@@ -12,6 +12,7 @@ const mix = require('laravel-mix');
  */
 
 mix
-    // .js('resources/js/app.js', 'public/js')
-    .js('resources/js/sort/sortTable.js', 'public/js/sort')
-   .sass('resources/sass/app.scss', 'public/css');
+  .js('resources/js/charts/statsChart.js', 'public/js/charts')
+  .js('resources/js/charts/homeChart.js', 'public/js/charts')
+  .sass('resources/sass/app.scss', 'public/css');
+

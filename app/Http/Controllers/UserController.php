@@ -25,7 +25,7 @@ class UserController extends Controller
         /* Validate data */ 
         $request->validate([
             'name' => 'required',
-            'email' => 'required', 'unique:users,email,$this->id,id',
+            'email' => 'required', 'unique:users, email,$this->id,id',
             'phone_number' => 'required', 'numeric',
         ]);
         /* Search for the ID from the User */

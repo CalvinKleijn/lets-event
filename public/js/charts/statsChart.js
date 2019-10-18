@@ -86,14 +86,38 @@
 /************************************************************************/
 /******/ ({
 
-/***/ "./resources/js/app.js":
-/*!*****************************!*\
-  !*** ./resources/js/app.js ***!
-  \*****************************/
+/***/ "./resources/js/charts/statsChart.js":
+/*!*******************************************!*\
+  !*** ./resources/js/charts/statsChart.js ***!
+  \*******************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-
+var myChart = document.getElementById('myChart').getContext('2d');
+var barChart = new Chart(myChart, {
+  type: 'bar',
+  data: {
+    labels: ['Gewonnen', 'Verloren', 'Gelijkgespeeld'],
+    datasets: [{
+      label: 'toernooi uitslagen',
+      data: ['66', '33', '1'],
+      backgroundColor: ['green', 'red', 'blue'],
+      borderWith: 1,
+      borderColor: '#ffffff',
+      hoverBorderWith: 3,
+      hoverborderColor: '#000'
+    }]
+  },
+  options: {
+    title: {// display: true,
+      // text: "Toernooi Uitslagen",
+      // fontSize: 25
+    },
+    legend: {
+      position: 'top'
+    }
+  }
+});
 
 /***/ }),
 
@@ -109,15 +133,14 @@
 /***/ }),
 
 /***/ 0:
-/*!*************************************************************!*\
-  !*** multi ./resources/js/app.js ./resources/sass/app.scss ***!
-  \*************************************************************/
+/*!***************************************************************************!*\
+  !*** multi ./resources/js/charts/statsChart.js ./resources/sass/app.scss ***!
+  \***************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp\htdocs\lets-event\resources\js\app.js */"./resources/js/app.js"); 
-module.exports = __webpack_require__(/*! C:\xampp\htdocs\lets-event\resources\sass\app.scss */"./resources/sass/app.scss"); 
-
+__webpack_require__(/*! C:\laragon\www\lets-event\resources\js\charts\statsChart.js */"./resources/js/charts/statsChart.js");
+module.exports = __webpack_require__(/*! C:\laragon\www\lets-event\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
