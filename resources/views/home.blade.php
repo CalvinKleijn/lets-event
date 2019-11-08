@@ -15,7 +15,11 @@
                     <div class="card-body">
                         <table class="table table-borderless table-striped">
                             <tbody>
+                                @if (count($tournaments) == 0)
+                                    <p class="text-center"><b>Momenteel doe je niet mee aan een toernooi.</b></p>
+                                @else
                                 @foreach($tournaments as $tournament)
+                                
                                 <tr>
                                     <th>{{ $tournament->name }}</th>
                                     <th>{{ $tournament->start_date_time }}</th>
@@ -25,7 +29,9 @@
                                             toernooi</a>
                                     </td>
                                 </tr>
+                                
                                 @endforeach
+                                @endif
                             </tbody>
                         </table>
 

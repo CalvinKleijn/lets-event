@@ -1,5 +1,4 @@
 {
-    "/js/charts/homeChart.js": "/js/charts/homeChart.js",
-    "/js/charts/statsChart.js": "/js/charts/statsChart.js",
+    "/js/app.js": "/js/app.js",
     "/css/app.css": "/css/app.css"
 }
