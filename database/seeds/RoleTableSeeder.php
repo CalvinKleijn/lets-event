@@ -22,6 +22,10 @@ class RoleTableSeeder extends Seeder
                 'id' => 2,
                 'name' => RoleEnum::PARTICIPANT
             ],
+            [
+                'id' => 3,
+                'name' => RoleEnum::REFEREE
+            ],
         ]);
     }
 }

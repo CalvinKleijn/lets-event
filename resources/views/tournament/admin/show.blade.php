@@ -25,6 +25,7 @@
                 <th class="col">Telefoonummer</th>
                 <th class="col">Beheerder</th>
                 <th class="col">Deelnemer</th>
+                <th class="col">Scheidsrechter</th>
                 <th class="col" colspan="2">Instellingen</th>
             </tr>
             @foreach ($tournamentUsers as $tournamentUser)
@@ -34,6 +35,7 @@
                     <td>{{ $tournamentUser->phone_number }}</td>
                     <td>{{ $tournamentUser->isOrganizer ? 'Ja' : 'Nee' }}</td>
                     <td>{{ $tournamentUser->isParticipant ? 'Ja' : 'Nee' }}</td>
+                    <td>{{ $tournamentUser->isReferee ? 'Ja' : 'Nee' }}</td>
                     <td>
                         @if ($tournamentUser->isOrganizer)
                             <form action="{{ action('TournamentAdminController@deleteUser', [
@@ -87,7 +89,27 @@
                         @endif
                     </td>
                 </tr>
+            
+        </table>
+        <table class="table">
+            <h2 class="text-left">Aanvragen voor scheidsrechter</h1>
+            <tr>
+                <th class="col">Naam</th>
+                <th class="col">E-mail</th>
+                <th class="col">Telefoonummer</th>
+                <th class="col" colspan="2">Instellingen</th>
+            </tr>
+            @if ($tournament->isReferee)    
+              
+            <tr>
+                <td>{{$tournamentUser->name}}</td>
+                <td>test</td>
+                <td></td>
+            </tr>
+            @endif
             @endforeach
+            
+            
         </table>
         <a href="{{ url('tournament') }}" class="btn btn-primary">Ga terug naar het overzicht</a>
     </div>

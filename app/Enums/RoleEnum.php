@@ -7,4 +7,5 @@ class RoleEnum
 {
     const ORGANIZER = 'organizer';
     const PARTICIPANT = 'participant';
+    const REFEREE = 'referee';
 }

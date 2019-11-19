@@ -6,6 +6,7 @@ use App\Enums\RoleEnum;
 use App\Role;
 use App\Tournament;
 use App\TournamentUserRole;
+use App\RefereeRequest;
 use App\User;
 use Carbon\Carbon;
 use DateTimeZone;
@@ -56,6 +57,10 @@ class TournamentController extends Controller
             $userHasParticipantRoleForTournament = $authUser
                 ->hasRoleInTournament(RoleEnum::PARTICIPANT, $tournament->id);
             $tournament['isParticipant'] = !!$userHasParticipantRoleForTournament;
+
+            $userHasRefereeRoleForTournament = $authUser
+                ->hasRoleInTournament(RoleEnum::REFEREE, $tournament->id);
+            $tournament['isReferee'] = !!$userHasRefereeRoleForTournament;
 
             return $tournament;
         });
@@ -300,5 +305,62 @@ class TournamentController extends Controller
 
         return redirect()->back()
             ->withErrors(['Je kan het toernooi niet verlaten omdat het al begonnen is.']);
+    }
+    public function requestReferee($tournamentId)
+    {
+        //zoek het id van de referee
+        $refereeRoleId = Role::all()->firstWhere('name', '=', 'referee')->id;
+
+        //kijk of deze user al een scheids is, als dat zo is stuur dan een foutcode
+        $existingRecord = TournamentUserRole::where([
+            'tournament_id' => $tournamentId,
+            'user_id' => Auth::id()
+        ]);
+
+        if ($existingRecord->count()) {
+            return redirect()
+                ->route('tournament.index')
+                ->withErrors(array('joinRefereeError' => 'Je bent al een scheidsrechter!'));
+        }
+
+        // Maak een request aan in de referee request table
+        RefereeRequest::create([
+            'tournament_id' => $tournamentId,
+            'user_id' => Auth::id(),
+            'status' => 'pending'
+        ]);
+
+        // Redirect terug naar de vorige pagina.
+        return redirect()->route('tournament.index');
+    }
+    public function deleteReferee($tournamentId)
+    {
+        //zoek het id van de referee
+        $refereeRoleId = Role::all()->firstWhere('name', '=', 'referee')->id;
+
+        //kijk of deze user al een scheids is, als dat zo is stuur dan een foutcode
+        $existingRecord = TournamentUserRole::where([
+            'tournament_id' => $tournamentId,
+            'user_id' => Auth::id(),
+            'role_id' => $refereeRoleId
+        ]);
+
+        if (!$existingRecord->count()) {
+            return redirect()
+                ->route('tournament.index')
+                ->withErrors(array('joinRefereeError' => 'Je bent geen scheidrechter!'));
+        }
+        TournamentUserRole::where([
+            'tournament_id' => $tournamentId,
+            'user_id' => Auth::id(),
+            'role_id' => $refereeRoleId
+        ])->delete();
+
+        RefereeRequest::where([
+            'tournament_id' => $tournamentId,
+            'user_id' => Auth::id(),
+        ])->delete();
+        return redirect()->route('tournament.index');
+
     }
 }
