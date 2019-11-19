@@ -18,7 +18,7 @@
 
     <div class="container">
         <h1 class="text-left">Overzicht van toernooien</h1>
-        <table class="table sortable" data-request-url="{{ route('tournament.sort') }}">
+        <table class="table sortable">
             <thead>
             <tr>
                 <th scope="col">

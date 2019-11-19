@@ -26,7 +26,7 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required',
             'email' => 'required', 'unique:users, email,$this->id,id',
-            'phone_number' => 'required', 'numeric',
+            'phone_number' => ['required', 'regex:/^([+]31)\s06(-)([0-9]\s{0,3}){8}$/u'],
         ]);
         /* Search for the ID from the User */
         $user = Auth::user();
