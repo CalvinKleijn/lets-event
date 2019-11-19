@@ -15,4 +15,3 @@ mix
   .js('resources/js/charts/statsChart.js', 'public/js/charts')
   .js('resources/js/charts/homeChart.js', 'public/js/charts')
   .sass('resources/sass/app.scss', 'public/css');
-

@@ -65,7 +65,7 @@ class TournamentController extends Controller
         if ($pageNumber > $lastPageNumber) {
             $pageNumber = $lastPageNumber;
         }
-        
+
         $oppositeOrderToSortBy = ($orderToSortBy == 'asc') ? 'desc' : 'asc';
 
         return view('tournament.index')
