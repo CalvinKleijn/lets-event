@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -120,14 +120,14 @@ var pieChart = new Chart(myChart, {
 
 /***/ }),
 
-/***/ 1:
+/***/ 2:
 /*!************************************************!*\
   !*** multi ./resources/js/charts/homeChart.js ***!
   \************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\laragon\www\lets-event\resources\js\charts\homeChart.js */"./resources/js/charts/homeChart.js");
+module.exports = __webpack_require__(/*! C:\xampp\htdocs\lets-event\resources\js\charts\homeChart.js */"./resources/js/charts/homeChart.js");
 
 
 /***/ })

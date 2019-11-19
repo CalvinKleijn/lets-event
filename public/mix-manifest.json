@@ -1,4 +1,6 @@
 {
-    "/js/app.js": "/js/app.js",
-    "/css/app.css": "/css/app.css"
+    "/js/charts/homeChart.js": "/js/charts/homeChart.js",
+    "/js/charts/statsChart.js": "/js/charts/statsChart.js",
+    "/css/app.css": "/css/app.css",
+    "/js/select-language.js": "/js/select-language.js"
 }
