@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -29,8 +30,9 @@ class Handler extends ExceptionHandler
     /**
      * Report or log an exception.
      *
-     * @param  \Exception  $exception
+     * @param \Exception $exception
      * @return void
+     * @throws Exception
      */
     public function report(Exception $exception)
     {
@@ -45,7 +47,10 @@ class Handler extends ExceptionHandler
      * @return \Illuminate\Http\Response
      */
     public function render($request, Exception $exception)
-    {        
+    {
+        if (!$request->expectsJson() && $exception instanceof MethodNotAllowedHttpException) {
+            return redirect('dashboard');
+        }
         return parent::render($request, $exception);
     }
 }
