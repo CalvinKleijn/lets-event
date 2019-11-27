@@ -2,46 +2,61 @@
 
 @section ('content')
 
-    @if(session()->has('message'))
-        <div class="container alert alert-success">
-            <b class="text-white">{{ session()->get('message') }}</b>
-        </div>
-    @endif
+@if(session()->has('message'))
+<div class="container alert alert-success">
+    <b class="text-white">{{ session()->get('message') }}</b>
+</div>
+@endif
 
-    @if($errors->any())
-        <div class=" container alert alert-danger">
-            @foreach ($errors->all() as $error)
-                <b class="text-white">{{ $error }}</b>
-            @endforeach
-        </div>
-    @endif
+@if($errors->any())
+<div class=" container alert alert-danger">
+    @foreach ($errors->all() as $error)
+    <b class="text-white">{{ $error }}</b>
+    @endforeach
+</div>
+@endif
 
-    <div class="container">
-        <h1 class="text-left">Overzicht van toernooien</h1>
-        <table class="table sortable">
-            <thead>
+<div class="container">
+    <h1 class="text-left">Overzicht van toernooien</h1>
+    <table class="table sortable">
+        <thead>
             <tr>
                 <th scope="col">
                     @if ($columnToSortBy == 'name')
-                        <a href="{{ route('tournament.index') }}?pageNumber={{ $pageNumber }}&columnToSortBy=name&orderToSortBy={{ $newOrderToSortBy }}">Naam</a>
+                    <a
+                        href="{{ route('tournament.index') }}?pageNumber={{ $pageNumber }}&columnToSortBy=name&orderToSortBy={{ $newOrderToSortBy }}">Naam</a>
                     @else
-                        <a href="{{ route('tournament.index') }}?pageNumber={{ $pageNumber }}&columnToSortBy=name">Naam</a>
+                    <a href="{{ route('tournament.index') }}?pageNumber={{ $pageNumber }}&columnToSortBy=name">Naam</a>
                     @endif
                 </th>
                 <th scope="col">
                     @if ($columnToSortBy == 'description')
-                        <a href="{{ route('tournament.index') }}?pageNumber={{ $pageNumber }}&columnToSortBy=description&orderToSortBy={{ $newOrderToSortBy }}">Beschrijving</a>
+                    <a
+                        href="{{ route('tournament.index') }}?pageNumber={{ $pageNumber }}&columnToSortBy=description&orderToSortBy={{ $newOrderToSortBy }}">Beschrijving</a>
                     @else
-                        <a href="{{ route('tournament.index') }}?pageNumber={{ $pageNumber }}&columnToSortBy=description">Beschrijving</a>
+                    <a
+                        href="{{ route('tournament.index') }}?pageNumber={{ $pageNumber }}&columnToSortBy=description">Beschrijving</a>
                     @endif
                 </th>
                 <th scope="col">
                     @if ($columnToSortBy == 'start_date_time')
-                        <a href="{{ route('tournament.index') }}?pageNumber={{ $pageNumber }}&columnToSortBy=start_date_time&orderToSortBy={{ $newOrderToSortBy }}">Start
-                            datum en tijd</a>
+                    <a
+                        href="{{ route('tournament.index') }}?pageNumber={{ $pageNumber }}&columnToSortBy=start_date_time&orderToSortBy={{ $newOrderToSortBy }}">Start
+                        datum en tijd</a>
                     @else
-                        <a href="{{ route('tournament.index') }}?pageNumber={{ $pageNumber }}&columnToSortBy=start_date_time">Start
-                            datum en tijd</a>
+                    <a
+                        href="{{ route('tournament.index') }}?pageNumber={{ $pageNumber }}&columnToSortBy=start_date_time">Start
+                        datum en tijd</a>
+                    @endif
+                </th>
+
+                <th scope="col">
+                    @if ($columnToSortBy == 'status')
+                    <a
+                        href="{{ route('tournament.index') }}?pageNumber={{ $pageNumber }}&columnToSortBy=status&orderToSortBy={{ $newOrderToSortBy }}">Status</a>
+                    @else
+                    <a
+                        href="{{ route('tournament.index') }}?pageNumber={{ $pageNumber }}&columnToSortBy=status">Status</a>
                     @endif
                 </th>
 
@@ -49,18 +64,19 @@
                 <th scope="col"></th>
                 <th scope="col" colspan="3"></th>
             </tr>
-            </thead>
-            <tbody>
+        </thead>
+        <tbody>
             @foreach($tournaments as $tournament)
-                <tr>
-                    <td>
-                        <a href="{{ route('tournament.show', $tournament->id) }}">{{ $tournament->name }}</a>
-                    </td>
-                    <td>{{ $tournament->description }}</td>
-                    <td>{{ $tournament->start_date_time }}</td>
-                    @if($tournament->isParticipant)
-                        <td>
-                            <a href="{{ route('tournament.leave', [
+            <tr>
+                <td>
+                    <a href="{{ route('tournament.show', $tournament->id) }}">{{ $tournament->name }}</a>
+                </td>
+                <td>{{ $tournament->description }}</td>
+                <td>{{ $tournament->start_date_time }}</td>
+                <td>{{ $tournament->status }}</td>
+                @if($tournament->isParticipant)
+                <td>
+                    <a href="{{ route('tournament.leave', [
                                     'tournamentId' => $tournament->id,
                                     'tournamentStartDateTime' => $tournament->start_date_time
                                 ]) }}"
@@ -72,6 +88,11 @@
                                class="btn btn-link btn-custom text-success">Meedoen aan toernooi</a>
                         </td>
                     @endif
+                    @if ($tournament->isReferee)
+                    <td><a class="text-danger" href="{{ action('TournamentController@deleteReferee', $tournament->id)}}">Verlaat als scheidsrechter</a></td>
+                @else
+                    <td><a class="text-success" href="{{ action('TournamentController@requestReferee', $tournament->id) }}">Wordt scheidsrechter</a></td>
+                @endif
                     @if($tournament->isOrganizer)
                         <td>
                             <a href="{{ route('tournament.admin.show', $tournament->id) }}" class="text-success">Instellingen</a>
@@ -92,22 +113,18 @@
                         {{--  Todo: Betere manier bedenken  --}}
                         <td></td>
                         <td></td>
-                        <td></td>
+                        <td></td>  
                     @endif
-                    @if ($tournament->isReferee)
-                        <td><a href="{{ action('TournamentController@deleteReferee', $tournament->id)}}">Verlaat als scheidsrechter</a></td>
-                    @else
-                        <td><a href="{{ action('TournamentController@requestReferee', $tournament->id) }}">Wordt scheidsrechter</a></td>
-                    @endif
+
                 </tr>
             @endforeach
-            </tbody>
-        </table>
+        </tbody>
+    </table>
 
-        @include('layouts.partials.pagination')
-        @yield('pagination')
+    @include('layouts.partials.pagination')
+    @yield('pagination')
 
-        <a href="{{ route('tournament.create') }}" class="btn btn-primary">Maak een toernooi</a>
+    <a href="{{ route('tournament.create') }}" class="btn btn-primary">Maak een toernooi</a>
 
-    </div>
+</div>
 @endsection

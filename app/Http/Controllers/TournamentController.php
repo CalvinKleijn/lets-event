@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Enums\RoleEnum;
+use App\RefereeRequest;
 use App\Role;
 use App\Tournament;
 use App\TournamentUserRole;
-use App\RefereeRequest;
 use App\User;
 use Carbon\Carbon;
 use DateTimeZone;
@@ -40,7 +40,7 @@ class TournamentController extends Controller
         $columnToSortBy = 'start_date_time';
         $requestColumnToSortBy = $request->get('columnToSortBy');
         if ($requestColumnToSortBy && (array_search($requestColumnToSortBy,
-                    ['id', 'name', 'description', 'start_date_time']) >= 0)) {
+                    ['id', 'name', 'description', 'start_date_time','status']) >= 0)) {
             $columnToSortBy = $requestColumnToSortBy;
         }
 
@@ -103,19 +103,21 @@ class TournamentController extends Controller
         $request->validate([
             'name' => 'required|string|max:50',
             'description' => 'required|string|max:255',
-            'start-date-time' => 'required|date_format:Y-m-d\TH:i'
+            'start-date-time' => 'required|date_format:Y-m-d\TH:i',
+            'status' => 'string|max:50',
         ]);
 
         if ($request->input('start-date-time') < now()) {
             return redirect()->back()
-                ->withErrors(['De ingevulde startdatum ligt in het verleden.'])
+                ->withErrors([__('app_messages.tournament.error_start_date_in_past')])
                 ->withInput($request->all());
         }
 
         $createdTournament = Tournament::create([
             'name' => $request->input('name'),
             'description' => $request->input('description'),
-            'start_date_time' => $request->input('start-date-time')
+            'start_date_time' => $request->input('start-date-time'),
+            'status' => 'Upcoming'
         ]);
 
         $organizerRoleId = Role::getByName(RoleEnum::ORGANIZER)->id;
@@ -126,7 +128,7 @@ class TournamentController extends Controller
             'role_id' => $organizerRoleId
         ]);
 
-        return redirect()->route('tournament.index')->with('message', 'Je hebt met succes een toernooi aangemaakt!');
+        return redirect()->route('tournament.index')->with('message', __('app_messages.tournament.store.success'));
     }
 
     /**
@@ -138,7 +140,8 @@ class TournamentController extends Controller
     public function show(Tournament $tournament)
     {
 //        $participantRoleId = RoleEnum::getByName('participant');
-        return view('tournament.show', compact('tournament'));
+        return view('tournament.show')
+            ->with('tournament', $tournament);
     }
 
     /**
@@ -152,12 +155,11 @@ class TournamentController extends Controller
         $organizerRole = Role::getByName('organizer');
 
         if (!$organizerRole) {
-            return redirect()->route('tournament.index')
-                ->withErrors(['Er bestaat geen toernooi administrator rol.']);
+            return redirect()->route('tournament.index');
         }
 
         // Check if logged in user is an organiser for the tournament
-        $organizerRoleId = Role::all()->firstWhere('name', '=', 'organizer')->id;
+        $organizerRoleId = Role::where('name', RoleEnum::ORGANIZER)->first()->id;
 
         $tournamentOrganizer = TournamentUserRole::where([
             'tournament_id' => $tournament->id,
@@ -167,10 +169,11 @@ class TournamentController extends Controller
 
         if (!$tournamentOrganizer->count()) {
             return redirect()->route('tournament.index')
-                ->withErrors(['Je bent geen beheerder van dit toernooi, je mag dit toernooi niet editten.']);
+                ->withErrors([__('app_messages.tournament.not_authorized')]);
         }
 
-        return view('tournament.edit')->with('tournament', $tournament);
+        return view('tournament.edit')
+            ->with('tournament', $tournament);
     }
 
     /**
@@ -185,20 +188,23 @@ class TournamentController extends Controller
         $request->validate([
             'name' => 'required|string|max:50',
             'description' => 'required|string|max:255',
-            'start-date-time' => 'required|date_format:Y-m-d\TH:i'
+            'start-date-time' => 'required|date_format:Y-m-d\TH:i',
+            'status' => 'string|max:50'
         ]);
 
         if ($request->input('start-date-time') < now()) {
-            return redirect()->back()->withErrors(['De ingevulde startdatum ligt in het verleden.']);
+            return redirect()->back()->withErrors([__('app_messages.tournament.error_start_date_in_past')]);
         }
 
         $tournament->update([
             'name' => $request->get('name'),
             'description' => $request->get('description'),
-            'start_date_time' => $request->get('start-date-time')
+            'start_date_time' => $request->get('start-date-time'),
+            'status' => 'Upcoming'
         ]);
 
-        return redirect()->route('tournament.index')->with('message', 'Je hebt met succes een toernooi gewijzigd!');
+        return redirect()->route('tournament.index')
+            ->with('message', __('app_messages.tournament.update.success'));
     }
 
     /**
@@ -211,43 +217,38 @@ class TournamentController extends Controller
     {
         if (!$tournament) {
             return redirect()->back()
-                ->withErrors(['Het opgevraagde toernooi is al verlopen of niet meer beschikbaar.'
-            ]);
+                ->withErrors([__('app_messages.tournament.destroy.tournament_not_available')]);
         }
 
-        $organizerRole = Role::getByName('organizer');
+        $organizerRole = Role::getByName(RoleEnum::ORGANIZER);
 
         if (!$organizerRole) {
-            return redirect()->back()
-                ->withErrors(['Er bestaat geen toernooi administrator rol.']);
+            return redirect()->back();
         }
-
-        // Check if logged in user is an organiser for the tournament
-        $organizerRoleId = Role::all()->firstWhere('name', '=', 'organizer')->id;
 
         $tournamentOrganizer = TournamentUserRole::where([
             'tournament_id' => $tournament->id,
             'user_id' => Auth::id(),
-            'role_id' => $organizerRoleId
+            'role_id' => $organizerRole->id
         ])->get();
 
         if (!$tournamentOrganizer->count()) {
             return redirect()->back()
-                ->withErrors(['Je bent geen beheerder van dit toernooi, je mag dit toernooi dus niet verwijderen.']);
+                ->withErrors([__('app_messages.tournament.not_authorized')]);
         }
 
         if (!Tournament::destroy($tournament->id)) {
             return redirect()->back()
-                ->withErrors(['Er is iets fout gegaan bij het verwijderen van het toernooi.']);
+                ->withErrors([__('app_messages.tournament.destroy.error_on_destroy')]);
         };
 
         // Delete alleen de relaties als het destroyen van het toernooi goed is gegaan.
         if (!TournamentUserRole::where('tournament_id', $tournament->id)->delete()) {
             return redirect()->back()
-                ->withErrors(['Er is iets fout gegaan bij het verwijderen van de relaties binnen het toernooi.']);
+                ->withErrors([__('app_messages.tournament.destroy.error_on_destroy')]);
         }
 
-        return redirect()->back()->with('message', 'Je hebt het toernooi met success verwijderd.');
+        return redirect()->back()->with('message', __('app_messages.tournament.destroy.success'));
     }
 
     /**
@@ -258,7 +259,7 @@ class TournamentController extends Controller
     public function join($tournamentId)
     {
         // Vraag het id van de rol op van een participant (deelnemer).
-        $participantRoleId = Role::all()->firstWhere('name', '=', 'participant')->id;
+        $participantRoleId = Role::where('name', RoleEnum::PARTICIPANT)->first()->id;
 
         $existingRecord = TournamentUserRole::where([
             'tournament_id' => $tournamentId,
@@ -269,7 +270,7 @@ class TournamentController extends Controller
         if ($existingRecord->count()) {
             return redirect()
                 ->route('tournament.index')
-                ->withErrors(array('joinParticipantError' => 'Je neemt al deel aan dit toernooi!'));
+                ->withErrors(array('joinParticipantError' => __('app_messages.tournament.join.error_already_participant')));
         }
 
         // Maak een nieuwe record aan in de TournamentUserRole table.
@@ -283,16 +284,22 @@ class TournamentController extends Controller
         return redirect()->route('dashboard');
     }
 
+    /**
+     * //TODO: Dubbele code? Zie HomeController@leave.
+     * @param $tournamentId
+     * @param $tournamentStartDateTime
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function leave($tournamentId, $tournamentStartDateTime)
     {
-        $participantRoleId = Role::all()->firstWhere('name', 'participant')->id;
+        $participantRoleId = Role::where('name', RoleEnum::PARTICIPANT)->first()->id;
         $time = Carbon::now(new DateTimeZone('Europe/Amsterdam'));
-        $mytime = $time->toDateTimeString();
+        $myTime = $time->toDateTimeString();
 
         //kijk of de current time kleiner is dan de tijd waarop het toernooi start
         //als dit zo is dan wordt de persoon verwijderd
         //als dit niet zo is wordt hij redirect terug naar de pagina met een message
-        if ($mytime < $tournamentStartDateTime) {
+        if ($myTime < $tournamentStartDateTime) {
             TournamentUserRole::where([
                 'tournament_id' => $tournamentId,
                 'user_id' => Auth::id(),
@@ -300,19 +307,21 @@ class TournamentController extends Controller
             ])->delete();
 
             return redirect()->back()
-                ->with('message', 'Je hebt het toernooi verlaten.');
+                ->with('message', __('app_messages.tournament.leave.success'));
         }
 
         return redirect()->back()
-            ->withErrors(['Je kan het toernooi niet verlaten omdat het al begonnen is.']);
+            ->withErrors([__('app_messages.tournament.leave.already_started')]);
     }
+
+    /**
+     * @param $tournamentId
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function requestReferee($tournamentId)
     {
-        //zoek het id van de referee
-        $refereeRoleId = Role::all()->firstWhere('name', '=', 'referee')->id;
-
-        //kijk of deze user al een scheids is, als dat zo is stuur dan een foutcode
-        $existingRecord = TournamentUserRole::where([
+        //kijk of deze user al eens heeft gevraagd om scheids te worden, als dat zo is stuur dan een foutcode
+        $existingRecord = RefereeRequest::where([
             'tournament_id' => $tournamentId,
             'user_id' => Auth::id()
         ]);
@@ -320,7 +329,7 @@ class TournamentController extends Controller
         if ($existingRecord->count()) {
             return redirect()
                 ->route('tournament.index')
-                ->withErrors(array('joinRefereeError' => 'Je bent al een scheidsrechter!'));
+                ->withErrors(array('joinRefereeError' => __('app_messages.tournament.request_referee.already_requested')));
         }
 
         // Maak een request aan in de referee request table
@@ -333,10 +342,15 @@ class TournamentController extends Controller
         // Redirect terug naar de vorige pagina.
         return redirect()->route('tournament.index');
     }
+
+    /**
+     * @param $tournamentId
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function deleteReferee($tournamentId)
     {
         //zoek het id van de referee
-        $refereeRoleId = Role::all()->firstWhere('name', '=', 'referee')->id;
+        $refereeRoleId = Role::where('name', '=', 'referee')->first()->id;
 
         //kijk of deze user al een scheids is, als dat zo is stuur dan een foutcode
         $existingRecord = TournamentUserRole::where([
@@ -347,8 +361,7 @@ class TournamentController extends Controller
 
         if (!$existingRecord->count()) {
             return redirect()
-                ->route('tournament.index')
-                ->withErrors(array('joinRefereeError' => 'Je bent geen scheidrechter!'));
+                ->route('tournament.index');
         }
         TournamentUserRole::where([
             'tournament_id' => $tournamentId,

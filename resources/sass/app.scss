@@ -52,3 +52,32 @@ a {
 .test {
     background-color:red;
 }
+
+.btn-circle {
+  width: 32px;
+  height: 32px;
+  text-align: center;
+  padding: 0;
+  border-radius: 50%;
+}
+
+.btn-circle i {
+  position: relative;
+  top: -1px;
+}
+
+.dutch {
+  background: url("images/nederlands.png") no-repeat;
+  height: 32px;
+  background-size: contain;
+  display: block;
+  float: left;
+}
+
+.english {
+  background: url("images/engels.png") no-repeat;
+  height: 32px;
+  background-size: contain;
+  display: block;
+  float:right;
+}
